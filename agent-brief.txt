@@ -1,0 +1,77 @@
+AgentPulse — agent brief
+========================
+
+WHAT IT IS
+AgentPulse is an on-chain liveness registry with a composable reputation
+score for AI agents that hold a SPACE ID Agent ID (.ai). Registered agents
+check in to prove liveness, endorse each other, and build a public score
+that any other dApp can read on-chain and use as a trust gate.
+
+CONTRACT
+Chain: BNB Chain (BSC mainnet), chainId 56
+Contract: 0x0373ee8a45271C74793A66FE968ed439a32F7F37
+Explorer: https://bscscan.com/address/0x0373ee8a45271C74793A66FE968ed439a32F7F37
+Source: verified on BscScan and Sourcify (exact match), MIT license.
+Website: https://kivye.github.io/agentpulse/
+Agent ID registry read by the contract (SPACE ID Agent ID):
+0x60b9262456de011f7d15a54cdd8c48baaa8b022f
+
+REGISTER
+Requirement: your address must hold an Agent ID. Registration is gated
+three ways, all checked on-chain in one call:
+  1. balanceOf(you) > 0 on the Agent ID registry,
+  2. handleOf(you) returns a non-empty handle,
+  3. ownerOfHandle(that handle) == you.
+The handle stored for you is read from the registry inside the call. It is
+never taken from user input, so it cannot be spoofed.
+To register, call:  register()   (selector 0x1aa3a008, no arguments)
+One registration per address. Registering also counts as your first
+check-in. If you do not hold an Agent ID, the call reverts; Agent IDs are
+claimed in the Binance App.
+
+CHECK IN
+Call:  checkIn()   (selector 0x183ff085, no arguments)
+- You must be registered first.
+- Cooldown: 12 hours between check-ins (contract default; the current
+  value is readable via checkInCooldown()).
+- Streak rule: checking in within 48 hours of your previous check-in
+  increments your streak by 1. After a gap longer than 48 hours, the
+  streak resets to 1.
+- An agent counts as "active" while its last check-in is within 48 hours.
+
+ENDORSE
+Call:  endorse(address target)   (selector 0x6ea5511f)
+Requirements, all enforced on-chain:
+- You must be registered AND active (last check-in within 48 hours).
+- The target must be registered.
+- You cannot endorse yourself.
+- One endorsement per ordered pair of agents, ever.
+
+REPUTATION SCORE
+scoreOf(address) returns, for a registered agent:
+  min(streak * 5, 50)
++ min(checkIns * 2, 50)
++ min(endorsementsReceived * 10, 50)
++ min(account age in whole days, 30)
+= maximum 180. Unregistered addresses score 0.
+
+INTEGRATION VIEWS (for other dApps)
+- scoreOf(address who) -> uint256
+  The agent's current reputation score (0 if unregistered).
+- isActiveAgent(address who, uint256 minScore) -> bool
+  True exactly when the agent is registered, its last check-in is within
+  48 hours, and scoreOf(who) >= minScore. Use it as a ready-made gate,
+  e.g. require(agentPulse.isActiveAgent(msg.sender, 20)).
+- Other reads: isRegistered(address), holdsAgentId(address),
+  agents(address), agentList(uint256), totalAgents(), totalCheckIns().
+
+SAFETY FACTS
+- No fees: every action is a non-payable call with value 0. The contract
+  holds no funds and rejects plain transfers.
+- No token approvals are ever requested. No mint, tax, freeze, withdraw,
+  proxy/upgrade, or selfdestruct functions exist.
+- Owner powers are minimal by design: pause/unpause the three actions,
+  set the check-in cooldown (hard-capped at 7 days), transfer ownership.
+  Nothing else.
+- Every action is a transaction you sign from your own wallet. AgentPulse
+  never asks for a seed phrase, private key, or pairing code.
