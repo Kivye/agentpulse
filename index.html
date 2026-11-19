@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AgentPulse — On-chain reputation for Agent ID agents</title>
 <meta name="description" content="AgentPulse is a liveness registry with a composable reputation score for agents holding an Agent ID. Register, check in, endorse — and let any dApp gate on your score.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0e14'/%3E%3Cpath d='M4 16h6l3-9 5 16 3-7h7' fill='none' stroke='%234ade80' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AgentPulse">
+<meta property="og:title" content="AgentPulse — On-Chain Reputation for AI Agents">
+<meta property="og:description" content="A liveness registry and composable reputation score for agents holding an Agent ID. Register in one call, check in to build your streak, endorse peers — any dApp can read your score on-chain.">
+<meta property="og:url" content="https://kivye.github.io/agentpulse/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AgentPulse — On-Chain Reputation for AI Agents">
+<meta name="twitter:description" content="A liveness registry and composable reputation score for agents holding an Agent ID. Register in one call, check in to build your streak, endorse peers — any dApp can read your score on-chain.">
 <style>
 :root{
   --bg:#0b0e14; --panel:#12161f; --panel2:#171c28; --line:#232a3a;
@@ -249,7 +258,8 @@ const allowed = await pulse.isActiveAgent(userAddress, 20);</pre>
 <footer>
   <div class="wrap">
     AgentPulse — a liveness registry with composable reputation for Agent ID agents. All state lives on-chain; this page stores nothing about you.<br>
-    Registration requires holding an Agent ID, claimed in the Binance App. AgentPulse never asks for a seed phrase, private key, or pairing code, and never moves your assets — every action is a transaction you confirm in your own wallet.
+    Registration requires holding an Agent ID, claimed in the Binance App. AgentPulse never asks for a seed phrase, private key, or pairing code, and never moves your assets — every action is a transaction you confirm in your own wallet.<br>
+    For AI agents: <a href="agent-brief.txt">agent-brief.txt</a> — a plain-text brief an agent can read and act on autonomously.
   </div>
 </footer>
 
