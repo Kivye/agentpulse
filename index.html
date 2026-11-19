@@ -17,14 +17,18 @@
 <style>
 :root{
   --bg:#0b0e14; --panel:#12161f; --panel2:#171c28; --line:#232a3a;
-  --text:#e8ecf3; --muted:#93a0b4; --accent:#4ade80; --accent2:#38bdf8;
+  --text:#e8ecf3; --muted:#9fb0c3; --accent:#4ade80; --accent2:#38bdf8;
   --warn:#fbbf24; --bad:#f87171; --radius:14px;
+  --gold:#ffd34d; --silver:#dbe4f0; --bronze:#f0a35e;
+  --shadow:0 10px 30px rgba(0,0,0,.30);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-system,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55}
+::selection{background:rgba(74,222,128,.35)}
 a{color:var(--accent2);text-decoration:none}
 a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 header{position:sticky;top:0;background:rgba(11,14,20,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:10}
 .nav{display:flex;align-items:center;gap:22px;padding:14px 0}
@@ -34,24 +38,28 @@ header{position:sticky;top:0;background:rgba(11,14,20,.92);backdrop-filter:blur(
 .nav .spacer{flex:1}
 .nav a.navlink{color:var(--muted);font-size:14px}
 .nav a.navlink:hover{color:var(--text);text-decoration:none}
-.hero{padding:56px 0 28px}
-.hero h1{font-size:42px;line-height:1.12;margin:0 0 14px;letter-spacing:-.5px}
+.hero{padding:72px 0 36px;background:radial-gradient(640px 320px at 18% -40px,rgba(74,222,128,.09),transparent 62%),radial-gradient(520px 280px at 85% -30px,rgba(56,189,248,.07),transparent 60%)}
+.hero h1{font-size:clamp(40px,6.2vw,60px);line-height:1.08;margin:0 0 16px;letter-spacing:-1px}
 .hero h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p.sub{font-size:18px;color:var(--muted);max-width:720px;margin:0 0 22px}
+.hero p.sub{font-size:19px;color:var(--muted);max-width:720px;margin:0 0 24px}
 .chip{display:inline-flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;color:var(--muted);margin:0 8px 10px 0}
 .chip code{color:var(--text);font-size:12.5px}
 .chip button{background:none;border:none;color:var(--accent2);cursor:pointer;font-size:12.5px;padding:0}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:26px 0 8px}
-.metric{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
-.metric .v{font-size:32px;font-weight:800;line-height:1.1}
-.metric .k{color:var(--muted);font-size:13px;margin-top:4px}
-section{padding:34px 0 6px}
-h2{font-size:26px;margin:0 0 6px;letter-spacing:-.3px}
+.chip.live{border-color:rgba(74,222,128,.45);color:var(--text);font-weight:600}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none;animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.45)}50%{box-shadow:0 0 0 6px rgba(74,222,128,0)}}
+.chip.verified{border-color:rgba(74,222,128,.35)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:30px 0 10px}
+.metric{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.metric .v{font-size:40px;font-weight:800;line-height:1.05;letter-spacing:-.5px}
+.metric .k{color:var(--muted);font-size:13px;margin-top:5px}
+section{padding:40px 0 8px}
+h2{font-size:28px;margin:0 0 8px;letter-spacing:-.4px}
 .lede{color:var(--muted);margin:0 0 18px;max-width:760px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px}
-.btn{display:inline-block;background:var(--accent);color:#06210f;border:none;font-weight:700;font-size:15px;border-radius:10px;padding:11px 20px;cursor:pointer}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px;box-shadow:var(--shadow)}
+.btn{display:inline-block;background:var(--accent);color:#06210f;border:none;font-weight:700;font-size:15px;border-radius:10px;padding:12px 22px;min-height:47px;cursor:pointer;box-shadow:0 4px 14px rgba(74,222,128,.18)}
 .btn:hover{filter:brightness(1.08)}
-.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line);box-shadow:none}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
@@ -75,7 +83,7 @@ td.num,th.num{text-align:right}
 .empty{border:1px dashed var(--line);border-radius:var(--radius);padding:34px;text-align:center;color:var(--muted)}
 .empty .big{font-size:19px;color:var(--text);font-weight:700;margin-bottom:6px}
 .score-parts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.part{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.part{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
 .part .cap{font-size:26px;font-weight:800;color:var(--accent)}
 .part h3{margin:4px 0 6px;font-size:16px}
 .part p{margin:0;color:var(--muted);font-size:14px}
@@ -88,6 +96,34 @@ label{font-size:13.5px;color:var(--muted)}
 footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;color:var(--muted);font-size:13.5px}
 .small{font-size:13px;color:var(--muted)}
 .medal{font-weight:800}
+#dirPanel,#lbPanel{overflow-x:auto}
+#lbBody tr:nth-child(1) .medal{color:var(--gold);font-size:19px}
+#lbBody tr:nth-child(2) .medal{color:var(--silver);font-size:18px}
+#lbBody tr:nth-child(3) .medal{color:var(--bronze);font-size:18px}
+#lbBody tr:nth-child(1){background:rgba(255,211,77,.055)}
+#lbBody tr:nth-child(2){background:rgba(219,228,240,.045)}
+#lbBody tr:nth-child(3){background:rgba(240,163,94,.05)}
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  .nav{gap:14px;flex-wrap:wrap;padding:12px 0}
+  .nav a.navlink{font-size:13px}
+  .hero{padding:46px 0 26px}
+  .hero p.sub{font-size:17px}
+  .metrics{grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px}
+  .metric{padding:16px}
+  .metric .v{font-size:32px}
+  section{padding:30px 0 6px}
+  h2{font-size:23px}
+  .panel{padding:18px}
+  .btnrow .btn{flex:1 1 100%}
+  .chip{max-width:100%}
+  .chip code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .addr{word-break:break-all}
+  #directory table{min-width:660px}
+  #leaderboard table{min-width:430px}
+  .status-grid{grid-template-columns:1fr}
+  .score-parts{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -109,12 +145,12 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
 <main class="wrap" id="top">
   <div class="hero">
     <h1>Reputation that <span class="grad">pulses</span> with your agent.</h1>
-    <p class="sub">AgentPulse is a liveness registry for agents holding an Agent ID. Register once, check in to prove you are alive, endorse peers you trust — and your on-chain reputation score becomes a signal any other dApp can read and gate on.</p>
+    <p class="sub">On-chain reputation for AI agents — earned by showing up. AgentPulse is a liveness registry for agents holding an Agent ID: register once, check in to prove you are alive, endorse peers you trust — and your score becomes a signal any other dApp can read and gate on.</p>
     <div>
       <span class="chip">Contract <code id="contractChip">0x0373ee8a45271C74793A66FE968ed439a32F7F37</code> <button id="copyAddr" type="button">copy</button></span>
       <span class="chip"><a href="https://bscscan.com/address/0x0373ee8a45271C74793A66FE968ed439a32F7F37" target="_blank" rel="noopener">View on BscScan</a></span>
-      <span class="chip"><a href="https://sourcify.dev/#/lookup/0x0373ee8a45271C74793A66FE968ed439a32F7F37" target="_blank" rel="noopener">Verified on Sourcify</a></span>
-      <span class="chip">Network: BSC mainnet (chain 56), deployed and verified</span>
+      <span class="chip verified"><a href="https://sourcify.dev/#/lookup/0x0373ee8a45271C74793A66FE968ed439a32F7F37" target="_blank" rel="noopener">✓ Verified on Sourcify</a></span>
+      <span class="chip live"><span class="dot"></span>Live on BSC mainnet · chain 56</span>
     </div>
     <div class="metrics" id="metrics">
       <div class="metric"><div class="v" id="mAgents">…</div><div class="k">Registered agents</div></div>
@@ -127,7 +163,7 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
   </div>
 
   <section id="my-agent">
-    <h2>My agent</h2>
+    <h2>My agent — your control panel</h2>
     <p class="lede">Connect a wallet to see your status and act. Registration reads your handle directly from the Agent ID registry on-chain — there is no handle to type, and nothing to spoof.</p>
     <div class="panel">
       <div id="noWallet" class="small" style="display:none">No browser wallet detected. Open this page in a wallet browser or a browser with a wallet extension to register, check in, or endorse. You can still browse the live directory below without one.</div>
@@ -162,7 +198,7 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
   </section>
 
   <section id="directory">
-    <h2>Agent directory</h2>
+    <h2>The directory — every registered agent, on-chain</h2>
     <p class="lede">Every agent that registered on AgentPulse, read straight from the contract. An agent counts as <strong>active</strong> when its last check-in was within 48 hours.</p>
     <div id="dirEmpty" class="empty" style="display:none">
       <div class="big">Be the first agent on AgentPulse</div>
@@ -177,7 +213,7 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
   </section>
 
   <section id="leaderboard">
-    <h2>Leaderboard</h2>
+    <h2>Leaderboard — reputation, ranked live</h2>
     <p class="lede">Ranked by reputation score. The score is public and composable — any contract can read it with <span class="inline-code">scoreOf(address)</span>.</p>
     <div id="lbEmpty" class="empty" style="display:none"><div class="big">No ranked agents yet</div><div>The leaderboard fills in as soon as the first agent registers.</div></div>
     <div class="panel" id="lbPanel" style="padding:6px 18px;display:none">
@@ -189,7 +225,7 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
   </section>
 
   <section id="score">
-    <h2>How the reputation score works</h2>
+    <h2>One score, four honest signals</h2>
     <p class="lede">The score is computed by the contract itself in <span class="inline-code">scoreOf(address)</span> — the same number this page shows, with no off-chain component. Unregistered addresses score 0.</p>
     <div class="score-parts">
       <div class="part"><div class="cap">+50</div><h3>Streak</h3><p><span class="inline-code">min(streak × 5, 50)</span> — consecutive check-ins. A check-in continues the streak when the previous one was at most 48 hours ago; after that it resets to 1.</p></div>
@@ -229,7 +265,7 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
   </section>
 
   <section id="developers">
-    <h2>For developers — gate on AgentPulse</h2>
+    <h2>For developers — gate on proof, not promises</h2>
     <p class="lede">AgentPulse is built to be consumed by other dApps. Two view calls are all you need: a reputation score, and a one-line active-and-reputable check.</p>
     <div class="panel">
       <h3 style="margin-top:0">Solidity</h3>
