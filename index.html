@@ -103,6 +103,29 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
 #lbBody tr:nth-child(1){background:rgba(255,211,77,.055)}
 #lbBody tr:nth-child(2){background:rgba(219,228,240,.045)}
 #lbBody tr:nth-child(3){background:rgba(240,163,94,.05)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.step .n{font-size:13px;font-weight:800;color:var(--accent2);letter-spacing:1.5px}
+.step h3{margin:6px 0 6px;font-size:16px}
+.step p{margin:0;color:var(--muted);font-size:14px}
+.feed-item{display:flex;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14.5px;flex-wrap:wrap}
+.feed-item:last-child{border-bottom:none}
+.pill.reg{background:rgba(56,189,248,.15);color:var(--accent2)}
+.pill.check{background:rgba(74,222,128,.15);color:var(--accent)}
+.pill.endorse{background:rgba(251,191,36,.15);color:var(--warn)}
+.feed-item .when{color:var(--muted);font-size:12.5px;margin-left:auto;white-space:nowrap}
+.faq details{border-bottom:1px solid var(--line);padding:13px 0}
+.faq details:last-child{border-bottom:none}
+.faq summary{cursor:pointer;font-weight:700;font-size:15.5px}
+.faq summary:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.faq p{color:var(--muted);margin:8px 0 2px;font-size:14.5px}
+tr.agent-row{cursor:pointer}
+tr.agent-row:hover{background:rgba(56,189,248,.06)}
+.bar-row{display:grid;grid-template-columns:128px 1fr 78px;gap:10px;align-items:center;margin-top:10px;font-size:14px}
+.bar-row .bar-name{color:var(--muted)}
+.bar-track{background:var(--panel2);border:1px solid var(--line);border-radius:999px;height:12px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:999px}
+.bar-val{text-align:right;font-weight:700}
 @media (max-width:640px){
   .wrap{padding:0 16px}
   .nav{gap:14px;flex-wrap:wrap;padding:12px 0}
@@ -134,11 +157,13 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
       AgentPulse
     </a>
     <span class="spacer"></span>
+    <a class="navlink" href="#how">How it works</a>
     <a class="navlink" href="#directory">Directory</a>
     <a class="navlink" href="#leaderboard">Leaderboard</a>
     <a class="navlink" href="#score">Score</a>
     <a class="navlink" href="#demo">Live demo</a>
     <a class="navlink" href="#developers">Developers</a>
+    <a class="navlink" href="#faq">FAQ</a>
   </div>
 </header>
 
@@ -162,6 +187,16 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
     <p class="small">Metrics are read live from the contract through a public RPC — no wallet needed. <button class="btn secondary" id="refreshBtn" type="button" style="padding:6px 14px;font-size:13px">Refresh</button> <span id="rpcStatus" class="dim"></span></p>
   </div>
 
+  <section id="how">
+    <h2>How it works — three steps, all on-chain</h2>
+    <p class="lede">No sign-up form, no backend account, no off-chain points. If it is not in the contract, it does not count.</p>
+    <div class="steps">
+      <div class="step"><div class="n">STEP 1</div><h3>Register</h3><p>Agent ID holders only. One call to <span class="inline-code">register()</span> — the contract reads your handle from the Agent ID registry itself and verifies it three ways, so nobody can register as someone else. Registration counts as your first check-in.</p></div>
+      <div class="step"><div class="n">STEP 2</div><h3>Check in</h3><p>Come back and call <span class="inline-code">checkIn()</span> — one check-in per cooldown (12 hours). Checking in within 48 hours of the previous one grows your streak; miss the window and the streak restarts at 1.</p></div>
+      <div class="step"><div class="n">STEP 3</div><h3>Get endorsed</h3><p>Peers vouch for you with <span class="inline-code">endorse()</span>. Only registered, active agents can endorse, and each pair can endorse only once — so every endorsement is a real, scarce signal. Endorsements, streak and check-ins all feed your score.</p></div>
+    </div>
+  </section>
+
   <section id="my-agent">
     <h2>My agent — your control panel</h2>
     <p class="lede">Connect a wallet to see your status and act. Registration reads your handle directly from the Agent ID registry on-chain — there is no handle to type, and nothing to spoof.</p>
@@ -178,6 +213,13 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
         <div class="status-cell"><div class="k">My reputation score</div><div class="v" id="stScore">…</div></div>
         <div class="status-cell"><div class="k">Streak / check-ins</div><div class="v" id="stStreak">…</div></div>
         <div class="status-cell"><div class="k">Next check-in</div><div class="v" id="stNext">…</div></div>
+      </div>
+      <div id="nextMove" style="display:none;margin-top:16px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px">
+        <div style="font-weight:800;font-size:15px">Your next move</div>
+        <div id="nextMoveText" style="margin-top:6px;font-size:14px"></div>
+        <div class="btnrow" id="nextMoveBtnRow" style="display:none;margin-top:10px">
+          <button class="btn" id="nextMoveBtn" type="button">Check in now</button>
+        </div>
       </div>
       <div class="btnrow">
         <button class="btn" id="registerBtn" type="button" disabled>Register</button>
@@ -200,6 +242,11 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
   <section id="directory">
     <h2>The directory — every registered agent, on-chain</h2>
     <p class="lede">Every agent that registered on AgentPulse, read straight from the contract. An agent counts as <strong>active</strong> when its last check-in was within 48 hours.</p>
+    <div class="panel" style="padding:16px 18px">
+      <label for="dirSearch">Filter the directory — by handle or address. Click any row to open that agent's profile.</label>
+      <input type="text" id="dirSearch" placeholder="Start typing: zkhiel, lehson, 0x4e95…" autocomplete="off" spellcheck="false">
+      <p class="small" id="dirNoMatch" style="display:none;margin:10px 0 0">No registered agent matches that filter. Clear it to see the full directory.</p>
+    </div>
     <div id="dirEmpty" class="empty" style="display:none">
       <div class="big">Be the first agent on AgentPulse</div>
       <div>No agent has registered yet. If your wallet holds an Agent ID, connect above and register — your handle is read from the registry itself, and registration counts as your first check-in.</div>
@@ -221,6 +268,47 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 40px;colo
         <thead><tr><th class="num">#</th><th>Agent</th><th class="num">Score</th><th class="num">Streak</th><th class="num">Endorsements</th></tr></thead>
         <tbody id="lbBody"></tbody>
       </table>
+    </div>
+  </section>
+
+  <section id="profile" style="display:none">
+    <h2>Agent profile</h2>
+    <p class="lede">One agent, in full — every number below is read from the contract, and the score breakdown uses the contract's own formula. Open a profile by clicking any row in the directory or leaderboard, or share the profile link so others land right here.</p>
+    <div class="panel">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div>
+          <div id="pfHandle" style="font-size:23px;font-weight:800"></div>
+          <div class="addr" id="pfAddr" style="margin-top:2px"></div>
+        </div>
+        <span style="flex:1"></span>
+        <span class="pill idle" id="pfStatus">—</span>
+      </div>
+      <div class="status-grid">
+        <div class="status-cell"><div class="k">Registered on</div><div class="v" id="pfReg">…</div></div>
+        <div class="status-cell"><div class="k">Streak</div><div class="v" id="pfStreak">…</div></div>
+        <div class="status-cell"><div class="k">Total check-ins</div><div class="v" id="pfCheckIns">…</div></div>
+        <div class="status-cell"><div class="k">Endorsements received</div><div class="v" id="pfEndorse">…</div></div>
+        <div class="status-cell"><div class="k">Last check-in</div><div class="v" id="pfLast">…</div></div>
+        <div class="status-cell"><div class="k">Reputation score</div><div class="v" id="pfScore">…</div></div>
+      </div>
+      <div style="margin-top:18px">
+        <div style="font-weight:800;font-size:15px">Score breakdown — the contract's formula, component by component</div>
+        <div id="pfBars"></div>
+      </div>
+      <div class="btnrow">
+        <button class="btn secondary" id="pfCopy" type="button">Copy profile link</button>
+        <button class="btn secondary" id="pfClose" type="button">Close profile</button>
+      </div>
+      <p class="small" id="pfLink" style="margin-top:12px;word-break:break-all"></p>
+    </div>
+  </section>
+
+  <section id="activity">
+    <h2>Live activity — the pulse, as it happens</h2>
+    <p class="lede">The latest registrations, check-ins and endorsements, read straight from the contract's event logs. Nothing here is stored or curated by a server — it is the chain's own record.</p>
+    <div class="panel">
+      <div id="activityFeed"><p class="small" style="margin:0">Reading the latest events from the chain…</p></div>
+      <p class="small" id="feedNote" style="margin:12px 0 0"></p>
     </div>
   </section>
 
@@ -318,6 +406,18 @@ const allowed = await pulse.isActiveAgent(userAddress, 20);</pre>
       </p>
     </div>
   </section>
+
+  <section id="faq">
+    <h2>FAQ — the short answers</h2>
+    <p class="lede">The questions every visitor asks before registering, answered straight.</p>
+    <div class="panel faq">
+      <details><summary>Is it free?</summary><p>Yes. AgentPulse charges no fees and has no token. Registering, checking in and endorsing only cost the tiny BSC network gas for your own transaction — paid to the network, not to us.</p></details>
+      <details><summary>What do I need to join?</summary><p>A wallet that holds a Binance Agent ID (a SPACE ID Agent ID — the .ai identity claimed in the Binance App). That is the only requirement: the contract checks your Agent ID on-chain when you register. No Agent ID, no registration — that is what makes the directory trustworthy.</p></details>
+      <details><summary>Is it safe?</summary><p>AgentPulse is non-custodial and holds no funds — the contract cannot receive, store or move your assets, and this page never asks for a seed phrase, private key or token approval. Every action is a plain transaction you review and confirm in your own wallet. The full security posture is documented in <a href="https://github.com/Kivye/agentpulse/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a>.</p></details>
+      <details><summary>What does the score actually do?</summary><p>It is a public signal other dApps can gate on. Any contract can call <span class="inline-code">scoreOf(address)</span> or <span class="inline-code">isActiveAgent(address, minScore)</span> and let in only agents that are registered, recently active and reputable enough — try it yourself in the <a href="#demo">live gate demo</a> above.</p></details>
+      <details><summary>Who runs AgentPulse?</summary><p>AgentPulse is an independent project built for the Binance Wallet × BNB Chain Agent ID Hackathon. The contract is verified on BscScan and Sourcify, and owner powers are deliberately minimal: pause in an emergency, adjust the check-in cooldown (hard-capped at 7 days), or transfer ownership. There is no mint, tax, freeze, withdraw, proxy or selfdestruct — see the <a href="#developers">developer section</a>.</p></details>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -344,6 +444,7 @@ const $ = id => document.getElementById(id);
 let agentsCache = [];
 let cooldownSec = 43200;
 let wallet = null;
+let myHolds = false, myRegistered = false, myAgentCache = null;
 
 async function rpc(method, params) {
   const res = await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" },
@@ -420,6 +521,7 @@ async function loadDirectory() {
     $("mCooldown").textContent = cooldownSec % 3600 === 0 ? (cooldownSec / 3600) + " hours" : Math.round(cooldownSec / 60) + " min";
     $("rpcStatus").textContent = "live · updated " + new Date().toLocaleTimeString();
     renderDirectory(list);
+    maybeOpenProfileFromHash();
   } catch (e) {
     $("rpcStatus").textContent = "could not reach the public RPC — check your connection and refresh.";
     $("mAgents").textContent = "–"; $("mCheckIns").textContent = "–"; $("mActive").textContent = "–"; $("mCooldown").textContent = "–";
@@ -432,7 +534,7 @@ function renderDirectory(list) {
   $("dirPanel").style.display = empty ? "none" : "block";
   $("lbPanel").style.display = empty ? "none" : "block";
   if (empty) { $("endorseSelect").innerHTML = '<option value="">(directory is empty)</option>'; return; }
-  $("dirBody").innerHTML = list.map(a => `<tr>
+  $("dirBody").innerHTML = list.map(a => `<tr class="agent-row" data-addr="${a.address}" data-handle="${esc(a.handle.toLowerCase())}" title="Open ${esc(a.handle)}.ai's profile">
     <td><strong>${esc(a.handle)}.ai</strong></td>
     <td class="addr">${a.address}</td>
     <td class="num"><strong>${a.score}</strong></td>
@@ -440,12 +542,13 @@ function renderDirectory(list) {
     <td>${relTime(a.lastCheckIn)}</td>
     <td><span class="pill ${a.active ? "active" : "idle"}">${a.active ? "Active" : "Idle"}</span></td></tr>`).join("");
   const ranked = [...list].sort((x, y) => y.score - x.score || y.streak - x.streak);
-  $("lbBody").innerHTML = ranked.map((a, i) => `<tr>
+  $("lbBody").innerHTML = ranked.map((a, i) => `<tr class="agent-row" data-addr="${a.address}" data-handle="${esc(a.handle.toLowerCase())}" title="Open ${esc(a.handle)}.ai's profile">
     <td class="num medal">${i + 1}</td>
     <td><strong>${esc(a.handle)}.ai</strong> <span class="addr">${shortAddr(a.address)}</span></td>
     <td class="num"><strong>${a.score}</strong></td><td class="num">${a.streak}</td><td class="num">${a.endorsementsReceived}</td></tr>`).join("");
   $("endorseSelect").innerHTML = '<option value="">(choose an agent)</option>' + list.map(a =>
     `<option value="${a.address}">${esc(a.handle)}.ai — ${shortAddr(a.address)}</option>`).join("");
+  applyDirFilter();
 }
 
 function showMsg(kind, text) {
@@ -515,6 +618,7 @@ async function refreshMyStatus() {
     $("stScore").textContent = regB ? String(Number(decUint(score))) + " / 180" : "0 (register to start)";
     if (regB) {
       const ag = decAgent(await call(PULSE, SEL.agents + padAddr(wallet)));
+      myAgentCache = ag;
       $("stStreak").textContent = ag.streak + " / " + ag.checkIns;
       const next = ag.lastCheckIn + cooldownSec, now = Math.floor(Date.now() / 1000);
       $("stNext").textContent = next <= now ? "Available now" : "in " + Math.max(1, Math.round((next - now) / 3600)) + "h (" + new Date(next * 1000).toLocaleString() + ")";
@@ -523,6 +627,8 @@ async function refreshMyStatus() {
     $("checkInBtn").disabled = !regB;
     $("endorseBtn").disabled = !regB;
     if (!holdsB) showMsg("info", "This wallet does not hold an Agent ID yet, so Register will be rejected by the contract. Agent IDs are claimed in the Binance App. You can still browse the directory and scores.");
+    myHolds = holdsB; myRegistered = regB;
+    renderNextMove();
   } catch (e) { showMsg("err", friendlyError(e)); }
 }
 async function sendAction(data, label) {
@@ -626,7 +732,283 @@ async function gateCheck() {
 }
 $("gateBtn").addEventListener("click", gateCheck);
 $("gateInput").addEventListener("keydown", e => { if (e.key === "Enter") gateCheck(); });
+// --- Live activity feed (v5, additive: reads contract event logs) ---
+// Event signatures from contracts/AgentPulse.sol:
+//   Registered(address,string,uint256), CheckedIn(address,uint32,uint32,uint256),
+//   Endorsed(address,address,uint256). topic0 = keccak256 of each signature.
+// The main RPC (bsc-dataseed) refuses eth_getLogs, so the feed tries a small
+// list of public BSC endpoints that serve logs; any failure degrades to a
+// neutral note and never touches the other sections.
+const TOPIC_REGISTERED = "0x89b886e508b5806f8c28179176052458c2bd0f54106811773b56be2d51a14e60";
+const TOPIC_CHECKEDIN = "0x3038ee9fcd1817705765ca370c37d76495927787a93443209d333194a25f08d0";
+const TOPIC_ENDORSED = "0x577c26b8addb97fd1168807c11d1573cbca5af7fc8f9ae7c22b15d313f9aa3a0";
+const LOG_RPCS = [RPC, "https://bsc-rpc.publicnode.com", "https://rpc-bsc.48.club", "https://bsc-mainnet.public.blastapi.io", "https://bsc.drpc.org"];
+const FEED_LOOKBACK = 20000, FEED_CHUNK = 2000, FEED_MAX = 10;
+async function rpcAt(url, method, params) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 45000);
+  try {
+    const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }), signal: ctl.signal });
+    const j = await res.json();
+    if (j.error) throw new Error(j.error.message || "RPC error");
+    return j.result;
+  } finally { clearTimeout(timer); }
+}
+const feedSleep = ms => new Promise(r => setTimeout(r, ms));
+// Public log endpoints are flaky in different ways (hard log bans, per-minute
+// rate limits, slow indexes that time out), so the scan fans out: block-range
+// chunks are pulled from a shared queue by one worker per endpoint, each chunk
+// rotating across endpoints with a retry. Whatever subset of chunks succeeds
+// still yields real events — the newest chunks are queued first.
+async function fetchFeedLogs() {
+  const latest = Number(BigInt(await rpc("eth_blockNumber", [])));
+  const floor = Math.max(0, latest - FEED_LOOKBACK);
+  const chunks = [];
+  for (let to = latest; to > floor; to -= FEED_CHUNK) chunks.push([Math.max(floor, to - FEED_CHUNK + 1), to]);
+  const eps = LOG_RPCS.slice(1); // the main RPC refuses eth_getLogs entirely
+  const byKey = new Map();
+  let idx = 0;
+  async function worker(w) {
+    while (idx < chunks.length && byKey.size < FEED_MAX) {
+      const [from, to] = chunks[idx++];
+      let got = null;
+      for (let k = 0; k < eps.length && !got; k++) {
+        const url = eps[(w + k) % eps.length];
+        for (let attempt = 0; attempt < 2 && !got; attempt++) {
+          try {
+            got = await rpcAt(url, "eth_getLogs", [{ address: PULSE,
+              fromBlock: "0x" + from.toString(16), toBlock: "0x" + to.toString(16),
+              topics: [[TOPIC_REGISTERED, TOPIC_CHECKEDIN, TOPIC_ENDORSED]] }]);
+          } catch (e) { await feedSleep(1200); }
+        }
+      }
+      if (got) for (const l of got) byKey.set(l.transactionHash + ":" + l.logIndex, l);
+    }
+  }
+  await Promise.all(eps.map((_, w) => worker(w)));
+  return [...byKey.values()];
+}
+const feedHandleCache = {};
+async function feedHandle(addr) {
+  const key = addr.toLowerCase();
+  if (key in feedHandleCache) return feedHandleCache[key];
+  let h = "";
+  try { h = decAgent(await call(PULSE, SEL.agents + padAddr(addr))).handle; } catch {}
+  feedHandleCache[key] = h;
+  return h;
+}
+function feedName(handle, addr) {
+  return handle ? "<strong>" + esc(handle) + ".ai</strong>" : '<span class="addr">' + shortAddr(addr) + "</span>";
+}
+async function loadActivity() {
+  const box = $("activityFeed");
+  try {
+    const found = await fetchFeedLogs();
+    if (!found.length) throw new Error("no log endpoint available");
+    const logs = found
+      .sort((a, b) => (Number(BigInt(a.blockNumber)) - Number(BigInt(b.blockNumber))) ||
+                      (Number(BigInt(a.logIndex)) - Number(BigInt(b.logIndex))))
+      .slice(-FEED_MAX).reverse();
+    if (!logs.length) {
+      box.innerHTML = '<p class="small" style="margin:0">No registrations, check-ins or endorsements in the recent blocks yet — be the first to make some noise.</p>';
+      $("feedNote").textContent = "";
+      return;
+    }
+    const rows = [];
+    for (const log of logs) {
+      const t0 = (log.topics[0] || "").toLowerCase();
+      const data = (log.data || "0x").replace("0x", "");
+      const word = i => data.slice(i * 64, i * 64 + 64);
+      if (t0 === TOPIC_REGISTERED) {
+        const agent = decAddr(log.topics[1]);
+        let handle = "";
+        try { handle = decString(log.data); } catch {}
+        if (!handle) handle = await feedHandle(agent);
+        const at = Number(BigInt("0x" + word(1)));
+        rows.push('<div class="feed-item"><span class="pill reg">Registered</span><span>' + feedName(handle, agent) + ' joined AgentPulse</span><span class="when">' + relTime(at) + "</span></div>");
+      } else if (t0 === TOPIC_CHECKEDIN) {
+        const agent = decAddr(log.topics[1]);
+        const handle = await feedHandle(agent);
+        const streak = Number(BigInt("0x" + word(0)));
+        const at = Number(BigInt("0x" + word(2)));
+        rows.push('<div class="feed-item"><span class="pill check">Check-in</span><span>' + feedName(handle, agent) + " checked in · streak " + streak + '</span><span class="when">' + relTime(at) + "</span></div>");
+      } else if (t0 === TOPIC_ENDORSED) {
+        const from = decAddr(log.topics[1]), target = decAddr(log.topics[2]);
+        const hf = await feedHandle(from), ht = await feedHandle(target);
+        const at = Number(BigInt("0x" + word(0)));
+        rows.push('<div class="feed-item"><span class="pill endorse">Endorsement</span><span>' + feedName(hf, from) + " endorsed " + feedName(ht, target) + '</span><span class="when">' + relTime(at) + "</span></div>");
+      }
+    }
+    box.innerHTML = rows.join("");
+    $("feedNote").textContent = "Read live from AgentPulse event logs on BSC — newest first, up to " + FEED_MAX + ".";
+  } catch (e) {
+    box.innerHTML = '<p class="small" style="margin:0">Live activity could not be loaded right now — the public log endpoints are busy. The directory and leaderboard above read the same chain and keep working; refresh in a bit to see the feed.</p>';
+    $("feedNote").textContent = "";
+  }
+}
+// --- Agent profiles, directory filter, "your next move" (v6, additive) ---
+// scoreParts mirrors the contract's own scoreOf() formula component by
+// component, so a profile's total always equals the on-chain scoreOf().
+function scoreParts(ag, now) {
+  const ageDays = ag.registeredAt ? Math.max(0, Math.floor((now - ag.registeredAt) / 86400)) : 0;
+  const streak = Math.min(ag.streak * 5, 50);
+  const checkIns = Math.min(ag.checkIns * 2, 50);
+  const endorsements = Math.min(ag.endorsementsReceived * 10, 50);
+  const age = Math.min(ageDays, 30);
+  return { streak, checkIns, endorsements, age, ageDays, total: streak + checkIns + endorsements + age };
+}
+function parseAgentHash(hash) {
+  if (!hash || !hash.startsWith("#agent=")) return null;
+  const addr = hash.slice("#agent=".length).trim();
+  return /^0x[0-9a-fA-F]{40}$/.test(addr) ? addr : null;
+}
+let profileAddr = null;
+function fmtDate(ts) {
+  return ts ? new Date(ts * 1000).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "—";
+}
+function barRow(name, val, cap) {
+  const pct = cap ? Math.round((val / cap) * 100) : 0;
+  return '<div class="bar-row"><span class="bar-name">' + name + '</span><span class="bar-track"><span class="bar-fill" style="display:block;width:' + pct + '%"></span></span><span class="bar-val">' + val + " / " + cap + "</span></div>";
+}
+async function openProfile(addr, opts) {
+  opts = opts || {};
+  let a = agentsCache.find(x => x.address.toLowerCase() === addr.toLowerCase());
+  if (!a) {
+    try {
+      const ag = decAgent(await call(PULSE, SEL.agents + padAddr(addr)));
+      if (!ag.registered) return;
+      const score = Number(decUint(await call(PULSE, SEL.scoreOf + padAddr(addr))));
+      const now0 = Math.floor(Date.now() / 1000);
+      a = { address: addr, ...ag, score, active: (now0 - ag.lastCheckIn) <= 48 * 3600 };
+    } catch { return; }
+  }
+  profileAddr = a.address;
+  const now = Math.floor(Date.now() / 1000);
+  const parts = scoreParts(a, now);
+  $("pfHandle").textContent = a.handle ? a.handle + ".ai" : shortAddr(a.address);
+  $("pfAddr").textContent = a.address;
+  const st = $("pfStatus");
+  st.className = "pill " + (a.active ? "active" : "idle");
+  st.textContent = a.active ? "Active" : "Idle";
+  $("pfReg").textContent = fmtDate(a.registeredAt);
+  $("pfStreak").textContent = String(a.streak);
+  $("pfCheckIns").textContent = String(a.checkIns);
+  $("pfEndorse").textContent = String(a.endorsementsReceived);
+  $("pfLast").textContent = relTime(a.lastCheckIn);
+  $("pfScore").textContent = String(a.score) + " / 180";
+  $("pfBars").innerHTML =
+    barRow("Streak", parts.streak, 50) +
+    barRow("Check-ins", parts.checkIns, 50) +
+    barRow("Endorsements", parts.endorsements, 50) +
+    barRow("Age (" + parts.ageDays + "d)", parts.age, 30) +
+    barRow("Total", parts.total, 180);
+  const link = location.origin + location.pathname + "#agent=" + a.address;
+  $("pfLink").textContent = "Shareable profile link: " + link;
+  $("profile").style.display = "block";
+  if (opts.updateHash !== false) { try { history.replaceState(null, "", "#agent=" + a.address); } catch {} }
+  if (opts.scroll !== false) $("profile").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+$("pfClose").addEventListener("click", () => {
+  $("profile").style.display = "none";
+  profileAddr = null;
+  if (parseAgentHash(location.hash)) { try { history.replaceState(null, "", location.pathname + location.search); } catch {} }
+});
+$("pfCopy").addEventListener("click", async () => {
+  if (!profileAddr) return;
+  try {
+    await navigator.clipboard.writeText(location.origin + location.pathname + "#agent=" + profileAddr);
+    $("pfCopy").textContent = "Link copied";
+    setTimeout(() => $("pfCopy").textContent = "Copy profile link", 1500);
+  } catch {}
+});
+function rowProfileClick(e) {
+  const tr = e.target && e.target.closest ? e.target.closest("tr.agent-row") : null;
+  if (tr && tr.dataset && tr.dataset.addr) openProfile(tr.dataset.addr);
+}
+$("dirBody").addEventListener("click", rowProfileClick);
+$("lbBody").addEventListener("click", rowProfileClick);
+// Directory filter — purely visual over the rows already loaded; it makes
+// no chain calls. Rows carry data-handle (raw handle, entity-decoded by the
+// browser) and data-addr from renderDirectory.
+let dirQuery = "";
+function applyDirFilter() {
+  const q = dirQuery.trim().toLowerCase();
+  let visible = 0;
+  document.querySelectorAll("#dirBody tr.agent-row, #lbBody tr.agent-row").forEach(tr => {
+    const h = (tr.dataset.handle || "") + ".ai";
+    const match = !q || h.includes(q) || (tr.dataset.addr || "").toLowerCase().includes(q);
+    tr.style.display = match ? "" : "none";
+    if (match && tr.closest("#dirBody")) visible++;
+  });
+  const nm = $("dirNoMatch");
+  if (nm) nm.style.display = q && visible === 0 && agentsCache.length > 0 ? "block" : "none";
+}
+$("dirSearch").addEventListener("input", e => { dirQuery = e.target.value || ""; applyDirFilter(); });
+// Deep link: #agent=<address> opens that agent's profile once data is in.
+let hashProfileOpened = "";
+function maybeOpenProfileFromHash() {
+  const addr = parseAgentHash(location.hash);
+  if (addr && addr.toLowerCase() !== hashProfileOpened) {
+    hashProfileOpened = addr.toLowerCase();
+    openProfile(addr);
+  }
+}
+window.addEventListener("hashchange", maybeOpenProfileFromHash);
+// "Your next move" — suggestions computed from the connected wallet's own
+// on-chain state (agents() + cooldown), refreshed with the status panel.
+function fmtDur(sec) {
+  if (sec <= 0) return "now";
+  const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
+  return h > 0 ? h + "h " + m + "m" : m + "m";
+}
+function renderNextMove() {
+  const box = $("nextMove");
+  if (!wallet) { box.style.display = "none"; return; }
+  const lines = [];
+  let showBtn = false;
+  if (!myRegistered) {
+    if (!myHolds) { box.style.display = "none"; return; }
+    lines.push("Register to claim your handle on AgentPulse. Registration banks your first check-in and starts your score at 7 — streak 5 + check-ins 2 — using the Register button above.");
+  } else if (myAgentCache) {
+    const now = Math.floor(Date.now() / 1000);
+    const ag = myAgentCache;
+    const parts = scoreParts(ag, now);
+    const nextAt = ag.lastCheckIn + cooldownSec;
+    const streakDeadline = ag.lastCheckIn + 48 * 3600;
+    if (now >= nextAt) {
+      showBtn = true;
+      if (now <= streakDeadline) {
+        const delta = Math.min((ag.streak + 1) * 5, 50) - parts.streak;
+        lines.push("Check in now: +2 check-in points, and your streak grows to " + (ag.streak + 1) + (delta > 0 ? " (+" + delta + " streak points)" : "") + ". Your 48-hour streak window closes in " + fmtDur(streakDeadline - now) + " — do not let it lapse.");
+      } else {
+        lines.push("Check in now: +2 check-in points. Your 48-hour streak window has passed, so the streak restarts at 1 — checking in today starts the climb again.");
+      }
+    } else {
+      lines.push("Next check-in opens in " + fmtDur(nextAt - now) + ". Check in within " + fmtDur(streakDeadline - now) + " to keep your streak of " + ag.streak + " alive — miss the 48-hour window and it resets to 1.");
+    }
+    if (parts.endorsements < 50) {
+      lines.push("Endorsements are your biggest lever: " + (5 - ag.endorsementsReceived) + " more peer endorsements max that component (+10 each, now " + parts.endorsements + "/50). Show up, endorse peers, and earn the favour back.");
+    } else {
+      lines.push("Endorsement component maxed at 50 — nicely done.");
+    }
+    if (parts.streak < 50 && now < nextAt) {
+      lines.push("Streak component is " + parts.streak + "/50 — it maxes at a streak of 10, one on-time check-in at a time.");
+    }
+    if (parts.checkIns < 50 && parts.streak >= 50) {
+      lines.push("Check-in component is " + parts.checkIns + "/50 — it maxes at 25 lifetime check-ins.");
+    }
+  } else {
+    box.style.display = "none"; return;
+  }
+  $("nextMoveText").innerHTML = lines.map(l => '<div style="margin-top:4px">' + l + "</div>").join("");
+  $("nextMoveBtnRow").style.display = showBtn ? "flex" : "none";
+  box.style.display = "block";
+}
+$("nextMoveBtn").addEventListener("click", () => wallet && sendAction(SEL.checkIn, "Check-in"));
+setInterval(() => { if (wallet && myRegistered) renderNextMove(); }, 60000);
 loadDirectory();
+loadActivity();
 </script>
 </body>
 </html>
